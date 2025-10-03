@@ -285,6 +285,9 @@ We then apply 1 more linear layer before we output the result
 attention_output = self.out(context_layer)
 ```
 
+<img src='./README images/Attention Layer.svg'>
+
+
 
 ## class Mlp:
 
@@ -312,6 +315,15 @@ def forward(self, x):
 
 ### `def __init__(self, config, vis):`
 
+```python
+super(Block, self).__init__()
+self.hidden_size = config.hidden_size
+self.attention_norm = LayerNorm(config.hidden_size, eps=1e-6)
+self.ffn_norm = LayerNorm(config.hidden_size, eps=1e-6)
+self.ffn = Mlp(config)
+self.attn = Attention(config, vis)
+
+```
 
 
 ### `def forward(self, x, crt_mod_method=None, crt_global_mod=None, crt_local_mod=None, query_mod=None, key_mod=None, top_n=None, device='cuda'):`
@@ -345,3 +357,21 @@ x is then passed to the feedforward normalization layer and feed into the feedfo
 x is then modulated again and added to h to create a residual connection.
 
 <img src='./README images/Block Architecture.svg'>
+
+## class Encoder
+
+### `def __init__(self, config, vis):`
+
+```python
+super(Encoder, self).__init__()
+self.vis = vis
+self.layer = nn.ModuleList()
+self.encoder_norm = LayerNorm(config.hidden_size, eps=1e-6)
+
+for _ in range(config.transformer["num_layers"]):
+    layer = Block(config, vis)
+    self.layer.append(copy.deepcopy(layer))
+```
+
+### `def forward(self, hidden_states, crt_mod_method=None, crt_global_mod_layers=[], crt_global_mod=None, crt_local_mod=None, query_mod=None, key_mod=None, device='cuda'):`
+
