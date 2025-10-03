@@ -32,15 +32,15 @@ Why prepending `[CLS]` token works?
 
 Because when we do self-attention, we allow `[CLS]` token to see everything in the same input.
 
-$
+$$
 \text{Attention}([\text{CLS}]) = \text{softmax}(\frac{Q_{[CLS]}K_{All}^T}{\sqrt{d_{K_{All}}}}) \cdot V_{All}
-$
+$$
 
 When we use query matrix $Q_{[CLS]}$ $(1 \times d)$ we can match to the key matrix of all the tokens of the input $K_{All}$ (N x d) and then compute the attention weights matrix for each value of other token by dot product operation $Q_{[CLS]}K_{All}^T$ $((1 \times d) \cdot (d \times N) = (1 \times N))$ and scale it to [0, 1] range by using softmax activation function. Finally, get the weighted sum for each token vector by dot product the weights to the values matrix $V_{All}$: 
 
-$
+$$
 \text{softmax}(\frac{Q_{[CLS]}K_{All}^T}{\sqrt{d_{K_{All}}}}) \cdot V_{All} = \text{Attention([CLS])}
-$ 
+$$
 
 $(1 \times N) \cdot (N \times d_V) = (1 \times d_V)$
 
